@@ -16,10 +16,10 @@
             android:name=".MainActivity2"
             android:exported="true">
 
-            <!-- <intent-filter> -->
-            <!-- <category android:name="android.intent.category.LAUNCHER"/> -->
-            <!-- <action android:name="android.intent.action.MAIN" /> -->
-            <!-- </intent-filter> -->
+             <intent-filter>
+             <category android:name="android.intent.category.LAUNCHER"/>
+             <action android:name="android.intent.action.MAIN" />
+             </intent-filter>
 
         </activity>
         <activity
