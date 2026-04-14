@@ -11,6 +11,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
 
 class MainActivity2 : AppCompatActivity() {
     val TAG = "MainActivity"
@@ -24,8 +26,10 @@ class MainActivity2 : AppCompatActivity() {
             insets
         }
 
-        runDemo1()
-        runDemo2() // demo of suspend function
+//        runDemo1()
+//        runDemo2() // demo of suspend function
+
+        runDemo3()
 
     }
 
@@ -73,6 +77,31 @@ class MainActivity2 : AppCompatActivity() {
             val answer2 = feedData2()
             Log.d(TAG,"Answer1 is $answer1")
             Log.d(TAG,"Answer2 is $answer2")
+        }
+    }
+
+    /***
+     * ตัวอย่างการสร้าง suspend แบบไม่ใช้ suspend function ภายใน
+     * ตัวอย่างการใช้งาน measureTime เพื่อจับเวลาการทำงานของใดๆ
+     */
+    private fun runDemo3(){
+        GlobalScope.launch {
+            val time = measureTime {
+//                doSomethingLog()
+                delay(1000L)
+            }
+
+            Log.d(TAG,"It took ${time.inWholeMilliseconds} sec")
+        }
+
+        Log.d(TAG,"Exit from Global Scope")
+    }
+
+
+    private suspend fun doSomethingLog(){
+        var i = 0
+        for (e in 0..200000000){
+            i++
         }
     }
 }
