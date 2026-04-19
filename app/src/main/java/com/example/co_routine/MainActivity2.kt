@@ -12,6 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
@@ -39,8 +40,8 @@ class MainActivity2 : AppCompatActivity() {
 
 //        demo5()
 
-        runDemo6()
-
+//        runDemo6()
+    runDemo7()
     }
 
 
@@ -215,5 +216,40 @@ class MainActivity2 : AppCompatActivity() {
 //            }
 //            }
 //        }
+    }
+
+    /**
+     * isActive เป็น property ของ CoroutineContext (Job)
+     * ใช้สำหรับตรวจสอบว่า Coroutine ยัง active อยู่หรือมี cancel request แล้ว
+     *
+     * Coroutine ใช้หลักการ cooperative cancellation
+     * คือจะไม่หยุดทำงานทันทีเมื่อถูก cancel แต่จะหยุดเมื่อมีการตรวจสอบสถานะ
+     *
+     * ในกรณีที่ไม่มี cancellation point (เช่น suspend function อย่าง delay, yield)
+     * เราสามารถใช้ isActive เพื่อตรวจสอบสถานะได้เอง
+     *
+     * ถ้า isActive เป็น false แสดงว่ามี cancel request แล้ว
+     * สามารถหยุดการทำงานหรือข้าม logic บางส่วนได้
+     */
+    private fun runDemo7(){
+
+        val job = GlobalScope.launch {
+            var count = 0
+            repeat(1000){
+//                if(!isActive) return@launch
+                count++
+
+                Log.d(TAG,"Count is $count")
+//                delay(100)
+                repeat(200000000){
+                    val i =0
+                }
+            }
+        }
+
+        GlobalScope.launch {
+            delay(5000)
+            job.cancel()
+        }
     }
 }
