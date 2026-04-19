@@ -1,6 +1,7 @@
 package com.example.co_routine
 
 import android.os.Bundle
+import android.provider.Telephony
 import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import kotlin.system.measureTimeMillis
 import kotlin.time.measureTime
@@ -32,7 +34,9 @@ class MainActivity2 : AppCompatActivity() {
 //        runDemo2() // demo of suspend function
 
 //        runDemo3()
-        runDemo4()
+//        runDemo4()
+
+        demo5()
 
     }
 
@@ -139,5 +143,29 @@ class MainActivity2 : AppCompatActivity() {
                 title = answer
             }
         }
+    }
+
+
+    /**
+     * runBlocking เป็น Coroutine Builder ที่ใช้สำหรับ bridge ระหว่างโลกของ blocking และ coroutine
+     *
+     * โดย runBlocking จะ block thread ปัจจุบัน (เช่น main thread)
+     * จนกว่า coroutine ภายในจะทำงานเสร็จ
+     *
+     * ซึ่งต่างจาก coroutine builders ทั่วไป (เช่น launch, async)
+     * ที่เป็น non-blocking และไม่ block thread ที่เรียกใช้งาน
+     *
+     * หมายเหตุ:
+     * runBlocking มักใช้ใน test หรือ main function เท่านั้น
+     * และไม่ควรใช้ใน Android (เช่น UI Thread) เพราะจะทำให้ UI ค้าง
+     */
+    private fun demo5(){
+
+        runBlocking {
+            Log.d(TAG,"Inside of coroutine runBlocking ${Thread.currentThread().name}")
+            delay(5000)
+        }
+
+        Log.d(TAG,"Outside of coroutine runBlocking ${Thread.currentThread().name}")
     }
 }
