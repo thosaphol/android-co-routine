@@ -7,10 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.system.measureTimeMillis
 import kotlin.time.measureTime
 
@@ -29,13 +31,14 @@ class MainActivity2 : AppCompatActivity() {
 //        runDemo1()
 //        runDemo2() // demo of suspend function
 
-        runDemo3()
+//        runDemo3()
+        runDemo4()
 
     }
 
 
     suspend fun feedData1() : String{
-        delay(1000L)
+        delay(2000L)
         return "Dog"
     }
 
@@ -102,6 +105,39 @@ class MainActivity2 : AppCompatActivity() {
         var i = 0
         for (e in 0..200000000){
             i++
+        }
+    }
+
+
+    /**
+     * Coroutine Context คือชุดขององค์ประกอบ (elements) ที่กำหนดพฤติกรรมของ Coroutine
+     * เช่น Dispatcher, Job, CoroutineName และ ExceptionHandler
+     *
+     * สามารถกำหนด Coroutine Context ได้ตอนสร้าง Coroutine เช่น:
+     *      - GlobalScope.launch(Dispatchers.IO)
+     *        (เป็นการส่ง CoroutineContext เข้าไปใน launch)
+     *
+     * และสามารถเปลี่ยน Context ชั่วคราวภายใน Coroutine เดิมได้ด้วย:
+     *      - withContext(Dispatchers.Main)
+     *
+     * โดย withContext จะเป็นการ switch thread ชั่วคราว
+     * และยังทำงานอยู่ใน Coroutine เดิม (ไม่สร้าง Coroutine ใหม่)
+     *
+     * หมายเหตุ:
+     * Coroutine Context สามารถรวมหลายองค์ประกอบเข้าด้วยกันได้ เช่น
+     *      Dispatchers.IO + Job() + CoroutineName("MyCoroutine")
+     */
+    private fun runDemo4(){
+        //Coroutine context (main and thread pool (default and IO))
+        GlobalScope.launch(Dispatchers.IO) {
+            Log.d(TAG,"Inside of coroutine ${Thread.currentThread().name}")
+            val answer = feedData1()
+
+            //switch coroutine from IO to Main in same Coroutine
+            withContext(Dispatchers.Main){
+                Log.d(TAG,"The answer is $answer")
+                title = answer
+            }
         }
     }
 }
