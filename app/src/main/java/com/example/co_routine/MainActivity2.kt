@@ -15,6 +15,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import kotlin.system.measureTimeMillis
 import kotlin.time.measureTime
 
@@ -36,7 +37,9 @@ class MainActivity2 : AppCompatActivity() {
 //        runDemo3()
 //        runDemo4()
 
-        demo5()
+//        demo5()
+
+        runDemo6()
 
     }
 
@@ -167,5 +170,50 @@ class MainActivity2 : AppCompatActivity() {
         }
 
         Log.d(TAG,"Outside of coroutine runBlocking ${Thread.currentThread().name}")
+    }
+
+
+    /**
+     * ตัวอย่างการใช้ job.cancel() เพื่อยกเลิกการทำงานของ Coroutine
+     *
+     * โดย job.cancel() จะส่งสัญญาณให้ Coroutine หยุดทำงาน
+     * แต่ Coroutine จะหยุดได้ก็ต่อเมื่อมีการตรวจสอบสถานะ (cooperative cancellation)
+     * เช่น การใช้ suspend function (delay, yield) หรือเช็ค isActive
+     *
+     * หมายเหตุ:
+     * job.cancel() ไม่ได้หยุดการทำงานทันทีแบบ force แต่เป็นการ request ให้หยุด
+     */
+
+    private fun runDemo6(){
+
+        val job = GlobalScope.launch {
+            var count = 0
+            repeat(1000){
+                count++
+
+                Log.d(TAG,"Count is $count")
+                delay(100)
+            }
+        }
+
+        GlobalScope.launch {
+            delay(5000)
+            job.cancel()
+        }
+
+        /*** หลายครั้ง job.cancel() จะไม่ cancel job โดยทันที
+         * ในกรณีนี้สามารถใช้ withTimeout(5000) เพื่อ cancel งานได้เลยเมื่อถึงเวลา
+         */
+//        GlobalScope.launch {
+//            withTimeout(5000){
+//                var count = 0
+//            repeat(1000){
+//                count++
+//
+//                Log.d(TAG,"Count is $count")
+//                delay(100)
+//            }
+//            }
+//        }
     }
 }
